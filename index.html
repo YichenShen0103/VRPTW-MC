@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>车辆路径可视化</title>
+    <script src="https://unpkg.com/cytoscape/dist/cytoscape.min.js"></script>
+    <style>
+      body {
+        margin: 0;
+        font-family: sans-serif;
+      }
+      #vehicle-selector {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        z-index: 10;
+        font-size: 16px;
+        padding: 4px;
+      }
+      #cy {
+        width: 100vw;
+        height: 100vh;
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <select id="vehicle-selector">
+      <option value="">选择车辆</option>
+    </select>
+    <div id="cy"></div>
+    <script>
+      // 示例节点和边
+      const nodes = [
+        { data: { id: "D1" } },
+        { data: { id: "D2" } },
+        { data: { id: "A" } },
+        { data: { id: "B" } },
+        { data: { id: "C" } },
+        { data: { id: "D" } },
+        { data: { id: "E" } },
+        { data: { id: "F" } }, // F 节点未连接
+        { data: { id: "G" } }, // G 节点未连接
+        { data: { id: "H" } }, // H 节点未连接
+        { data: { id: "I" } }, // I 节点未连接
+        { data: { id: "J" } }, // J 节点未连接
+        { data: { id: "K" } },
+        { data: { id: "L" } }, // L 节点未连接
+        { data: { id: "M" } }, // M 节点未连接
+        { data: { id: "N" } }, // N 节点未连接
+        { data: { id: "O" } }, // O 节点未连接
+        { data: { id: "P" } }, // P 节点未连接
+        { data: { id: "Q" } }, // Q 节点未连接
+        { data: { id: "R" } }, // R 节点未连接
+        { data: { id: "S" } }, // S 节点未连接
+        { data: { id: "T" } }, // T 节点未连接
+        { data: { id: "U" } }, // U 节点未连接
+        { data: { id: "V" } }, // V 节点未连接
+        { data: { id: "W" } }, // W 节点未连接
+        { data: { id: "X" } }, // X 节点未连接
+        { data: { id: "Y" } }, // Y 节点未连接
+      ];
+
+      const edges = [
+        { data: { id: "D1A", source: "D1", target: "A", weight: 51.478 } },
+        { data: { id: "D1B", source: "D1", target: "B", weight: 56.604 } },
+        { data: { id: "D1C", source: "D1", target: "C", weight: 25.495 } },
+        { data: { id: "D1D", source: "D1", target: "D", weight: 34.205 } },
+        { data: { id: "D1E", source: "D1", target: "E", weight: 19.698 } },
+        { data: { id: "D1F", source: "D1", target: "F", weight: 7.211 } },
+        { data: { id: "D1G", source: "D1", target: "G", weight: 30.463 } },
+        { data: { id: "D1H", source: "D1", target: "H", weight: 12.369 } },
+        { data: { id: "D1I", source: "D1", target: "I", weight: 35.735 } },
+        { data: { id: "D1J", source: "D1", target: "J", weight: 37.656 } },
+        { data: { id: "D1K", source: "D1", target: "K", weight: 14.56 } },
+        { data: { id: "D1L", source: "D1", target: "L", weight: 25.495 } },
+        { data: { id: "D1M", source: "D1", target: "M", weight: 37.054 } },
+        { data: { id: "D1N", source: "D1", target: "N", weight: 21.095 } },
+        { data: { id: "D1O", source: "D1", target: "O", weight: 5.0 } },
+        { data: { id: "D1P", source: "D1", target: "P", weight: 8.632 } },
+        { data: { id: "D1Q", source: "D1", target: "Q", weight: 34.205 } },
+        { data: { id: "D1R", source: "D1", target: "R", weight: 18.439 } },
+        { data: { id: "D1S", source: "D1", target: "S", weight: 38.184 } },
+        { data: { id: "D1T", source: "D1", target: "T", weight: 29.0 } },
+        { data: { id: "D1U", source: "D1", target: "U", weight: 20.809 } },
+        { data: { id: "D1V", source: "D1", target: "V", weight: 34.928 } },
+        { data: { id: "D1W", source: "D1", target: "W", weight: 43.324 } },
+        { data: { id: "D1X", source: "D1", target: "X", weight: 28.46 } },
+        { data: { id: "D1Y", source: "D1", target: "Y", weight: 49.031 } },
+        { data: { id: "D2A", source: "D2", target: "A", weight: 35.468 } },
+        { data: { id: "D2B", source: "D2", target: "B", weight: 43.267 } },
+        { data: { id: "D2C", source: "D2", target: "C", weight: 25.962 } },
+        { data: { id: "D2D", source: "D2", target: "D", weight: 27.166 } },
+        { data: { id: "D2E", source: "D2", target: "E", weight: 40.0 } },
+        { data: { id: "D2F", source: "D2", target: "F", weight: 18.111 } },
+        { data: { id: "D2G", source: "D2", target: "G", weight: 18.439 } },
+        { data: { id: "D2H", source: "D2", target: "H", weight: 37.108 } },
+        { data: { id: "D2I", source: "D2", target: "I", weight: 11.18 } },
+        { data: { id: "D2J", source: "D2", target: "J", weight: 53.009 } },
+        { data: { id: "D2K", source: "D2", target: "K", weight: 21.541 } },
+        { data: { id: "D2L", source: "D2", target: "L", weight: 11.045 } },
+        { data: { id: "D2M", source: "D2", target: "M", weight: 50.249 } },
+        { data: { id: "D2N", source: "D2", target: "N", weight: 18.028 } },
+        { data: { id: "D2O", source: "D2", target: "O", weight: 24.021 } },
+        { data: { id: "D2P", source: "D2", target: "P", weight: 23.77 } },
+        { data: { id: "D2Q", source: "D2", target: "Q", weight: 41.785 } },
+        { data: { id: "D2R", source: "D2", target: "R", weight: 42.048 } },
+        { data: { id: "D2S", source: "D2", target: "S", weight: 33.136 } },
+        { data: { id: "D2T", source: "D2", target: "T", weight: 27.295 } },
+        { data: { id: "D2U", source: "D2", target: "U", weight: 25.942 } },
+        { data: { id: "D2V", source: "D2", target: "V", weight: 10.198 } },
+        { data: { id: "D2W", source: "D2", target: "W", weight: 26.249 } },
+        { data: { id: "D2X", source: "D2", target: "X", weight: 15.297 } },
+        { data: { id: "D2Y", source: "D2", target: "Y", weight: 28.844 } },
+
+        { data: { id: "AB", source: "A", target: "B", weight: 9.055 } },
+        { data: { id: "AW", source: "A", target: "W", weight: 9.22 } },
+        { data: { id: "CN", source: "C", target: "N", weight: 8.062 } },
+        { data: { id: "CT", source: "C", target: "T", weight: 3.606 } },
+        { data: { id: "CU", source: "C", target: "U", weight: 5.385 } },
+        { data: { id: "DG", source: "D", target: "G", weight: 9.055 } },
+        { data: { id: "DS", source: "D", target: "S", weight: 6.0 } },
+        { data: { id: "DT", source: "D", target: "T", weight: 7.0 } },
+        { data: { id: "ER", source: "E", target: "R", weight: 8.485 } },
+        { data: { id: "FO", source: "F", target: "O", weight: 6.083 } },
+        { data: { id: "FP", source: "F", target: "P", weight: 8.062 } },
+        { data: { id: "GL", source: "G", target: "L", weight: 7.616 } },
+        { data: { id: "GX", source: "G", target: "X", weight: 3.162 } },
+        { data: { id: "HR", source: "H", target: "R", weight: 9.22 } },
+        { data: { id: "IV", source: "I", target: "V", weight: 3.0 } },
+        { data: { id: "JM", source: "J", target: "M", weight: 5.0 } },
+        { data: { id: "KO", source: "K", target: "O", weight: 9.849 } },
+        { data: { id: "LN", source: "L", target: "N", weight: 9.22 } },
+        { data: { id: "LX", source: "L", target: "X", weight: 4.472 } },
+        { data: { id: "NU", source: "N", target: "U", weight: 8.485 } },
+        { data: { id: "NX", source: "N", target: "X", weight: 9.22 } },
+        { data: { id: "OP", source: "O", target: "P", weight: 8.246 } },
+        { data: { id: "ST", source: "S", target: "T", weight: 9.22 } },
+        { data: { id: "TU", source: "T", target: "U", weight: 8.944 } },
+        { data: { id: "WY", source: "W", target: "Y", weight: 8.062 } },
+      ];
+
+      const vehicleRoutes = {
+        car0: ["D1", "Q", "Q", "D1", "H", "D1"],
+        car1: ["D1", "W", "Y", "D2", "T", "C", "D1"],
+        car5: ["D1", "F", "F", "D1"],
+        car6: ["D1", "B", "A", "D2", "X", "G", "D1"],
+        car7: ["D1", "C", "C", "D2", "W", "W", "D1"],
+        car8: ["D1", "M", "M", "D1", "E", "R", "D1"],
+        car9: ["D1", "O", "O", "D1", "S", "S", "D1"],
+        car10: ["D1", "U", "U", "D2", "Y", "Y", "D1"],
+        car17: ["D1", "D", "D", "D2", "V", "V", "D1"],
+        car20: ["D1", "S", "D", "D2", "L", "L", "D1"],
+        car22: ["D1", "A", "A", "D2", "G", "G", "D1"],
+        car25: ["D1", "R", "R", "D1"],
+        car27: ["D1", "I", "I", "D2", "F", "P", "D1"],
+        car28: ["D1", "N", "N", "D2", "X", "X", "D1"],
+        car29: ["D1", "Q", "D1", "K", "K", "D1"],
+        car30: ["D1", "B", "B", "D2", "N", "U", "D1"],
+        car31: ["D1", "J", "M", "D1"],
+        car32: ["D1", "P", "P", "D1"],
+        car33: ["D1", "H", "H", "D1", "T", "T", "D1"],
+        car34: ["D1", "E", "E", "D1"],
+        car35: ["D1", "J", "J", "D1"],
+        car38: ["D1", "K", "O", "D1"],
+        car39: ["D1", "I", "V", "D2", "L", "D1"],
+      };
+      const colorPool = [
+        "#e6194b",
+        "#3cb44b",
+        "#ffe119",
+        "#4363d8",
+        "#f58231",
+        "#911eb4",
+        "#46f0f0",
+        "#f032e6",
+        "#bcf60c",
+        "#fabebe",
+      ];
+      const colors = Object.fromEntries(
+        Object.keys(vehicleRoutes).map((car, i) => [
+          car,
+          colorPool[i % colorPool.length],
+        ])
+      );
+
+      const cy = cytoscape({
+        container: document.getElementById("cy"),
+        elements: [...nodes, ...edges],
+        style: [
+          {
+            selector: "node",
+            style: {
+              "background-color": "#888",
+              label: "data(id)",
+              "font-size": 14,
+            },
+          },
+          {
+            selector: "edge",
+            style: {
+              width: 3,
+              "line-color": "#ccc",
+              "curve-style": "bezier",
+              label: "data(weight)",
+              "font-size": 10,
+            },
+          },
+          {
+            selector: ".highlighted",
+            style: {
+              "line-color": "#f90",
+              "background-color": "#f90",
+            },
+          },
+        ],
+        layout: {
+          name: "circle",
+        },
+      });
+
+      // Populate vehicle selector
+      const selector = document.getElementById("vehicle-selector");
+      for (const car in vehicleRoutes) {
+        const option = document.createElement("option");
+        option.value = car;
+        option.textContent = car;
+        selector.appendChild(option);
+      }
+
+      selector.addEventListener("change", () => {
+        cy.elements().removeClass("highlighted");
+        const car = selector.value;
+        if (car && vehicleRoutes[car]) {
+          highlightPath(vehicleRoutes[car], colors[car]);
+        }
+      });
+
+      // 点击节点高亮所有经过的车辆
+      cy.on("tap", "node", (evt) => {
+        const clickedNode = evt.target.id();
+        cy.elements().removeClass("highlighted");
+
+        Object.entries(vehicleRoutes).forEach(([car, path]) => {
+          if (path.includes(clickedNode)) {
+            highlightPath(path, colors[car]);
+          }
+        });
+      });
+
+      cy.on("tap", (evt) => {
+        if (evt.target === cy) {
+          cy.elements().removeClass("highlighted");
+          selector.value = "";
+        }
+      });
+
+      function highlightPath(path, color) {
+        for (let i = 0; i < path.length - 1; i++) {
+          const source = path[i];
+          const target = path[i + 1];
+          const edge = cy
+            .edges()
+            .filter(
+              (e) =>
+                (e.data("source") === source && e.data("target") === target) ||
+                (e.data("source") === target && e.data("target") === source)
+            );
+          edge.addClass("highlighted");
+          edge.style("line-color", color);
+        }
+        path.forEach((nodeId) => {
+          const node = cy.getElementById(nodeId);
+          node.addClass("highlighted");
+          node.style("background-color", color);
+        });
+      }
+    </script>
+  </body>
+</html>
