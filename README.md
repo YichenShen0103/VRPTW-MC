@@ -170,7 +170,7 @@ Iteration:
 
 经过 10000 轮迭代，以下是最优代价随迭代轮数的变化趋势，可以看到，最优代价呈现出了较好和较快的收敛趋势。
 
-![](/Users/shenyc/code/VRPTW-MC/asset/best_cost_over_generations.png)
+![](./asset/best_cost_over_generations.png)
 
 以下是最优的规划方案的描述版本，最优代价为：**14606.59**。
 
