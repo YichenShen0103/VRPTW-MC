@@ -3,6 +3,7 @@ from collections import Counter
 import time
 import random
 from tqdm import tqdm
+import matplotlib.pyplot as plt
 
 
 class GeneticAlgorithm:
@@ -59,6 +60,7 @@ class GeneticAlgorithm:
 
         self.population = []
         self.fitness_cache = {}
+        self.best_cost_memory = []
 
     def _chromosome_to_matrix(self, chromosome):
         """将列表形式的染色体转换为矩阵形式。(保留此方法以备调试)"""
@@ -188,6 +190,8 @@ class GeneticAlgorithm:
                 pop_with_fitness, key=lambda x: x[1]
             )
 
+            self.best_cost_memory.append(-current_best_fitness)
+
             if current_best_fitness > best_overall_fitness:
                 best_overall_fitness = current_best_fitness
                 best_overall_chromosome = current_best_chromosome
@@ -219,4 +223,16 @@ class GeneticAlgorithm:
         print(f"总耗时: {end_time - start_time:.2f} 秒")
 
         final_cost = -best_overall_fitness
+
+        # x轴默认是从0开始的索引序列
+        x = list(range(len(self.best_cost_memory)))
+
+        # 画图
+        plt.plot(x, self.best_cost_memory, marker="o")  # marker='o' 表示点的形状为圆点
+        plt.title("Best Cost Over Generations")
+        plt.xlabel("Iteration")
+        plt.ylabel("Best Cost")
+        plt.grid(True)  # 添加网格线
+        plt.savefig("asset/best_cost_over_generations.png")  # 保存图像
+
         return best_overall_chromosome, final_cost

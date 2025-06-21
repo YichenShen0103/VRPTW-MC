@@ -60,11 +60,11 @@ class Station:
             require_upper_bound = self.require_upper_bound[oil_type - 1]
             require_lower_bound = self.require_lower_bound[oil_type - 1]
             remain = self.remain[oil_type - 1]
-            residual = vehicle_capacity + remain - ParamConstant.TANK_CAPACITY
+            residual = remain - ParamConstant.TANK_CAPACITY
 
-            window[0] = 24.0 * max(0.0, residual / require_upper_bound)
-            window[1] = 24.0 * max(0.0, residual / require_average)
-            window[2] = 24.0 * max(0.0, residual / require_lower_bound)
+            window[0] = 24.0 * max(0.0, residual / require_upper_bound + 1)
+            window[1] = 24.0 * max(0.0, residual / require_average + 1)
+            window[2] = 24.0 * max(0.0, residual / require_lower_bound + 1)
 
             return window
         else:

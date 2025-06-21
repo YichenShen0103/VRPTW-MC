@@ -10,6 +10,7 @@ class HyperParamConstant(Enum):
     # GA 超参数
     POPULATION_SIZE = 200
     NUM_GENERATIONS = 10_000
+    # NUM_GENERATIONS = 10
     CROSSOVER_RATE = 0.8
     MUTATION_RATE = 0.03  # 变异率可以调高一些以增加多样性
     TOURNAMENT_SIZE = 5
